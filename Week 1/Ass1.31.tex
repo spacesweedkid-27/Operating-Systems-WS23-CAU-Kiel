@@ -1,0 +1,46 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{Operating Systems\\Assignment 1.31}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\singlespacing
+\subsubsection*{}
+Running gcc gives 2 syntactical errors: \\
+Line 14: There seem to miss some curved brackets. \\
+Line 15: There is no \verb|+| operator for \verb|char*| and \verb|char*|. \\
+There are also 1 warning: \\
+In line 15: \verb|printf| is referenced without being included, the compiler notifies the user and includes \verb|stdio.h| to prevent an error. \\
+If we fix these issues there still is one semantic error, because what this program is doing is not actually changing the pointer that points to the first value of the wanted array, because the variable \verb|int *ptr| is just a value of something, later here arr, that is assigned to something we now call \verb|ptr|. Changing \verb|ptr| does not change \verb|arr| because \verb|ptr| is only the value of \verb|arr|. We are not accessing the reference to the variable that we want to change, but only a copy of the value we give a new name.
+\end{document}
