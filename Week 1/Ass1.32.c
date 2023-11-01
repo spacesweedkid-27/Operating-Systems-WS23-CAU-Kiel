@@ -14,7 +14,7 @@ int main() {
         int d = arr[i];
         printf("The %d-th element is %d.\n", i, d); // changed
     } //changed
-    return 1;
+    return 0; // changed
 }
 
 
