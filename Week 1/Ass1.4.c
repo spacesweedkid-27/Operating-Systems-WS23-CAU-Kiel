@@ -126,13 +126,14 @@ int main(int argc, char** argv) {
 
     if (steps < 0) {
         printf("Element could not be found...\n");
-        return 1;
+        //return -1;
     }
 
     printf("Steps: %d\n", steps);
 
     printf("id: %d\nName: %s\nAmount: %d\n", found_element.id, found_element.name, found_element.amount);
     
+
 
     // TODO: Implement printing the result of the search
     // If nothing is found this should be printed
