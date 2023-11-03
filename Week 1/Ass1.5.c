@@ -142,32 +142,39 @@ void appendLeft(struct DoublyLinkedList* list, struct Data data){
 // Return 0 if the popping worked, 1 if you tried to pop from an empty list (do not exit)
 int pop(struct DoublyLinkedList* list, struct Data* popped){
     // is the list empty?
-    if (list->last == NULL){
+    if (list == NULL || list->first == NULL || list->last == NULL){
         return 1;
     }
 
     // Copy the value into popped
     // printf("%d",list->last->data.id);
 
-    *popped = list->last->data;
+    *popped = list->first->data;
 
     
     // Copy the adress to the last element
-    struct Node* oldLast = list->last;
-    struct Node* newLast = list->last->former;
+    struct Node* oldFirst = list->first;
+    struct Node* newFirst = list->first->next;
 
-
-
-
-    
 
     // New last element is the former from the popped one
 
-    list->last = newLast;
+    list->first = newFirst;
 
-    free(oldLast);
+    free(oldFirst);
 
+    return 0;
+}
+
+
+int popAndPrintAll(struct DoublyLinkedList* list){
+    struct Data* currElem = malloc(sizeof(struct Data));
     
+    // pop -> 0 (= false) when succeding
+    while (!pop(list, currElem))
+    {
+        printf("ID: %d, Length: %d\n",currElem->id, currElem->length);
+    }
 
     return 0;
 }
@@ -199,16 +206,7 @@ int main() {
     
     printf("_________________\n");
 
-
-    
-    struct Data* currElem = malloc(sizeof(struct Data));
-    
-    // pop -> 0 (= false) when succeding
-    while (!pop(&list, currElem))
-    {
-        printf("ID: %d, Length: %d\n",currElem->id, currElem->length);
-    }
-
+    popAndPrintAll(&list);
     printf("Popping complete\n");
     
     appendLeft(&list, data1);
