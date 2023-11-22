@@ -21,3 +21,8 @@ Week 1/a.out
 .vscode/c_cpp_properties.json
 Week 1/binary_search
 .vscode/launch.json
+*/*.log
+*/*.aux
+*/*.*mk
+*/*.fls
+*/*.gz

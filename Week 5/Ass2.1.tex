@@ -1,0 +1,77 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+
+\usepackage[
+    left = \glqq{},% 
+    right = \grqq{},% 
+    leftsub = \glq{},% 
+    rightsub = \grq{} %
+]{dirtytalk}
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{Operating Systems\\Assignment 2.1}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\singlespacing
+
+\subsection*{1)}
+\subsubsection*{a)}
+\verb|opendir| returns a pointer to the first element of the open directory as an opaque data type.\\
+Quote from Linux's Programmers Manual:\\
+\say{The opendir function opens a directory stream corresponding to the directory name, and returns a pointer to the directory stream.  The stream is positioned at the first entry in the directory.}
+\subsubsection*{b)}
+It is, because \verb|opendir| and \verb|open| return similar information about multiple or one files: \\
+\verb|opendir| returns information about filenames and their location, whereas \verb|open| returns a file descriptor, making it possible to read and write to a file. \\
+Both functions prepare the usage of a directory / file while only giving basic information about them.
+\subsection*{2)}
+It's not, because \verb|readdir| returns \verb|NULL| when it reaches the end of a \verb|DIR*| from \verb|opendir|. The \verb|DIR*| may be subjected to corruption which may lead to \verb|readdir| to return \verb|NULL|. For example an application may call \verb|readdir| after \verb|closedir| on accident which results in undefined behavior.
+\subsection*{3)}
+- normal files (like user made files)\\
+- device files (like some files under \verb|/dev/|)\\
+- directory files (like link files) \\
+- communication channels (like \verb|/dev/stdout|) \pagebreak
+\subsection*{4)}
+- Size \\
+- Blocks used \\
+- Type of file \\
+- Linkcounter
+\subsection*{5)}
+\subsubsection*{a)}
+A hard link stores information about the inode of a file.
+\subsubsection*{b)}
+A soft link stores information about the path of a file.
+\subsection*{6)}
+\say{-l: use a long listing format}, which also makes it display the sizes of each file, last written date and time, total bytes and permissions. \\
+-R executes ls for each directory in the current directory, that is not \say{..}. \\
+-r executes ls but lists in reversed order. \\
+-1 executes ls but lists in single-collum format.
+\end{document}
