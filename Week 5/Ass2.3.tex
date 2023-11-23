@@ -1,0 +1,85 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{listings}
+
+\usepackage[
+    left = \glqq{},% 
+    right = \grqq{},% 
+    leftsub = \glq{},% 
+    rightsub = \grq{} %
+]{dirtytalk}
+
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{Operating Systems\\Assignment 2.3}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize
+}
+\lstset{style = code}
+
+
+\begin{document}
+\maketitle
+
+\singlespacing
+
+\section*{a)}
+\subsection*{1)}
+\subsubsection*{I)}
+Yes it does, since \verb|char| type objects are exactly 1 byte big.
+\subsubsection*{II)}
+It is, because a \verb|char*| is just a \verb|void*| but with information about how to interpret access to the object.
+\subsection*{2)}
+\subsubsection*{I)}
+In case of an error when calling \verb|malloc|, it will return \verb|NULL|.
+\subsubsection*{II)}
+Since \verb|NULL| is the same as 0 cast to \verb|void*|, if \verb|malloc| fails, we can catch that an abort the method.
+\subsubsection*{III)}
+Definitely not, because \verb|malloc| may be implemented differently across different compilers as they are differently implemented across different libraries.
+\subsection*{3)}
+\subsubsection*{I)}
+Since \verb|str| is a pointer to a pointer to the first character, we have to change the pointer of \verb|str| and not \verb|str| itself.
+\subsubsection*{II)}
+This results in the following line: \verb|*str = new_str;|
+\section*{b)}
+A correct version is the following, we counted the errors and marked them with comments:
+\begin{lstlisting}[language=sh]
+#!/bin/sh #1,2
+if (($1 < 3)); then #3,4,5
+  echo You inserted a number less than 3
+fi #5
+answer=1 #6
+while (($answer < 5)) #7
+do #8
+   answer=$(($answer + 1)) #9
+done #10
+\end{lstlisting}
+\end{document}
