@@ -39,14 +39,31 @@
 \author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
 \date{}
 
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize
+}
+\lstset{style = code}
 
 \begin{document}
 \maketitle
 
 \singlespacing
 \subsection*{a)}
-Let \verb|email| be a local file containing lines of strings. Then calling the following will catch only emails:
+Let \verb|email| be a local file containing lines of strings. Then calling the following will catch only correct email adresses:
 \begin{lstlisting}[language=sh]
 cat email | grep "[0-9a-z]\+@[0-9a-z]\+\(\.com\|\.de\)"
 \end{lstlisting}
+\subsection*{b)}
+\subsubsection*{1)}
+The following is a wildcard for all file names starting with \say h or \say m and ending with \say{.c}:
+\vspace*{-0.65cm}
+\begin{lstlisting}[language=sh]
+               [hm]*.c
+\end{lstlisting}
+\subsubsection*{2)}
+This one matches filens with a filename that is two characters long and does not start with 1 or 0.
+\subsubsection*{3)}
+This one matches files with a filename that starts with one arbitrary character, then has a \say w and then some string, that ends with \say s and some arbitrary character.
+\subsubsection*{4)}
+This one matches files with a filename that don't start with a lower-case letter and then have an arbitrary string that ends with at least one accurate of \say{abba} and does not end with a number.
 \end{document}
