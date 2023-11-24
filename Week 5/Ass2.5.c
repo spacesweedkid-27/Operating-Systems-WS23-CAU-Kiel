@@ -29,9 +29,12 @@ int read_file(char* path, char** read_string){
     char* BUFFER = (char*)malloc(SIZE);
 
     int FILE = open(path, O_RDONLY);
-    printf("%ld Bytes read into buffer.\n", read(FILE, &BUFFER, SIZE));
+    // If one of them is -1 then there was a read error.
+    if (read(FILE, BUFFER, SIZE) != SIZE || SIZE == -1){
+        free(BUFFER);
+        return 1;
+    }
     close(FILE);
-    printf("%s\n", BUFFER);
     *read_string = BUFFER;
     return 0;
 }
@@ -40,8 +43,8 @@ int wc(char* path){
     // char* to store the files bytes
     char* read_string;
     read_file(path, &read_string);
-    printf("Debug2\n");
-    printf("\n%s\n", read_string);
+    // Now the data is prepared.
+    printf("%s\n", read_string);
 
     return (int)path[0];
 }
