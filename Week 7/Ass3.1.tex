@@ -1,0 +1,99 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{csquotes} % for \textquote{}
+\usepackage{listings}
+\usepackage{tabularx}
+
+\usepackage[
+    left = \glqq{},% 
+    right = \grqq{},% 
+    leftsub = \glq{},% 
+    rightsub = \grq{} %
+]{dirtytalk}
+
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{Operating Systems\\Assignment 3.1}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize
+}
+\lstset{style = code}
+
+
+\begin{document}
+\maketitle
+
+
+\subsubsection*{Exceptions}
+1. A CPU or a virtual CPU unit like the OS \\
+2. Interrupts, traps and syscalls are handled by the OS and signals are handled by a process \\
+3. Interrupts, traps and syscalls really should be handled by the OS since else it would result in complete undefined behaviour, signals should also be handled since if not then there could not be more than one program running with more or less defined behaviour. If there would only be one process with no syntactical errors, it should be fine, but then there would not be any kind of OS behind, so it is not recommended. \\
+4. Interrupts, traps and syscalls are handled on L2 and signals are handled on L3
+\subsubsection*{Signals}
+5. Synchronous signals on a process are triggered by itself and asynchronous signals on a process are triggered by something else, like for example another process or an IO-Operation. \\
+6. \vspace*{0.2cm} \\
+\begin{tabularx}{1\textwidth}{
+    | >{\raggedright\arraybackslash}X
+    | >{\raggedright\arraybackslash}X
+    | >{\raggedright\arraybackslash}X |}
+    \hline
+    \hline
+    Name    & Type & Meaning \\
+    \hline
+    \hline
+    \verb|SIGSEGV| & Synchronous & Segment violation \\
+    \hline
+    \verb|SIGINT| 	& Asynchronous & Interrupt for an IO operation for example \\	
+    \hline
+    \verb|SIGTERM| & Asynchronous & Terminate the process (ignorable) \\		
+    \hline
+    \verb|SIGKILL| & Asynchronous & Kill the process (unignorable) \\		
+    \hline
+    \verb|SIGSTOP| & Asynchronous & Stop the process (unignorable) \\		
+    \hline
+    \verb|SIGCONT| & Asynchronous & Continue process \\
+    \hline
+    \hline
+\end{tabularx} \vspace*{0.2cm} \\
+7., 8. and 9.:\\
+From the Linux Programmer's Manual: \\
+\textquote{The sigaction() system call is used to change the action taken by a process on receipt of a specific signal.} \\
+\textquote{signal() sets the disposition of the signal signum to handler, which is either SIGIGN, SIGDFL, or the address of a programmer-defined function (a \textquote{signal handler}).} \\
+Adding to that \verb|signal()| is implemented differently across different OS where \verb|sigaction()| is always implemented the same. \\
+Also \verb|signal()| resets to \verb|SIGDFL| after each call and is not recommended by the Linux Programmer's Manual. \\
+\subsubsection*{IPC}
+10. IPC is an abbreviation for: \textquote{inter-process-communication} \\
+11. For example the \verb|killall| (User-)command in Linux can kill processes that have a certain name. This could be implemented by sending \verb|SIGKILL| signals to the processes after which the parent reports via \verb|SIGCHLD| to the OS or the \verb|killall| process, that the child has been killed. \\
+Also another fun example would be a program, that kills their parent when they tell them to be killed. This would also be an example of IPC. \\
+\subsubsection*{Parallelism and Concurrency}
+12. Parallelism is when multiple threads run on two different real cores while Concurrency is when multiple threads run on the same core but share computing time (evenly) by being interrupted and continued by the OS.
+
+\end{document}
