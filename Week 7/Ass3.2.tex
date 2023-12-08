@@ -1,0 +1,115 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{csquotes} % for \textquote{}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows, automata, positioning}
+
+\usepackage[
+    left = \glqq{},% 
+    right = \grqq{},% 
+    leftsub = \glq{},% 
+    rightsub = \grq{} %
+]{dirtytalk}
+
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{Operating Systems\\Assignment 3.2}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize
+}
+\lstset{style = code}
+
+
+\begin{document}
+\maketitle
+\subsubsection*{1.}
+I don't know how to make cornered edges in a tikzpicture automata, but this should suffice. The numerics describe in which line we currently are, if there is an if or else block. Note that if \verb|fork()| returns a value subzero, then the further execution of this path will fail and this picture will not make sense.\\
+\hspace*{-3cm}
+\begin{tikzpicture}[auto, ->, >=stealth', node distance=3cm, semithick, block/.style={maximum size =1.5cm},  font=\small, align = center]
+    \tikzstyle{every state}=[draw=none]
+    \node (0) {l0};
+    \node[right of = 0] (3) {l3};
+    \node[right of = 3] (14) {l14};
+    \node[right of = 14] (pW) {\verb|"Welcome"|};
+    \node[right of = pW] (17) {l17};
+    \node[right of = 17] (pF) {\verb|"Farewell"|};
+    \node[right of = pF] (r0) {\verb|return(0);|};
+
+    \node[above right = 1.732cm and 2cm of 17] (pB) {\verb|"Bye"|};
+    \node[right of = pB] (r1) {\verb|return(0);|};
+
+    
+    \node[above right = 4cm and 2.3cm of 3] (4) {l4}; % tikz makes me fiddle with it more like with ...
+    \node[right of = 4] (7) {l7};
+    \node[right of = 7] (9) {l9};
+    \node[right of = 9] (pH) {\verb|"Howdy"|};
+    \node[right of = pH] (e0) {\verb|exit(0);|};
+
+    \node[above right = 1.732cm and 2.3cm of 4] (pHi) {\verb|"Hi"|};
+    \node[above right = 1.732cm and 2.3cm of pHi] (e1) {\verb|exit(0);|};
+
+    \node[above right = 1.732cm and 2.3cm of 7] (pHe) {\verb|"Hello"|};
+    \node[right of = pHe] (e2) {\verb|exit(0);|};
+
+    \path (0) edge [] node {} (3);
+    \path (3) edge [] node {\(\ne 0\)} (14);
+    \path (14) edge [] node {} (pW);
+    \path (pW) edge [] node {\(\ne 0\)} (17);
+    \path (17) edge [] node {} (pF);
+    \path (pF) edge [] node {} (r0);
+
+    \path (17) edge [] node {\(=0\)} (pB);
+    \path (pB) edge [] node {} (r1);
+
+    \path (3) edge [] node {\(=0\)} (4);
+    \path (4) edge [] node {\(\ne 0\)} (7);
+    \path (7) edge [] node {\(\ne 0\)} (9);
+    \path (9) edge [] node {} (pH);
+    \path (pH) edge [] node {} (e0);
+
+    \path (4) edge [] node {\(= 0\)} (pHi);
+    \path (pHi) edge [] node {} (e1);
+
+    \path (7) edge [] node {\(= 0\)} (pHe);
+    \path (pHe) edge [] node {} (e2);
+
+\end{tikzpicture}
+\subsubsection*{2.}
+\textbf{a)} False \\
+\textbf{b)} True \\
+\textbf{c)} False \\
+\textbf{d)} False \\
+\textbf{e)} False \\
+\textbf{f)} True
+\subsubsection*{3.}
+TODO. Möglich das Diagramm davor zu rotieren, zu verschieben und einen Pfad als rote Pfeile zu markieren.
+\end{document}
