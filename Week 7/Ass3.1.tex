@@ -94,6 +94,6 @@ Also \verb|signal()| resets to \verb|SIGDFL| after each call and is not recommen
 11. For example the \verb|killall| (User-)command in Linux can kill processes that have a certain name. This could be implemented by sending \verb|SIGKILL| signals to the processes after which the parent reports via \verb|SIGCHLD| to the OS or the \verb|killall| process, that the child has been killed. \\
 Also another fun example would be a program, that kills their parent when they tell them to be killed. This would also be an example of IPC. \\
 \subsubsection*{Parallelism and Concurrency}
-12. Parallelism is when multiple threads run on two different real cores while Concurrency is when multiple threads run on the same core but share computing time (evenly) by being interrupted and continued by the OS.
+12. Parallelism is when multiple threads run on different real cores while Concurrency is when multiple threads run on the same core but share computing time (evenly) by being interrupted and continued by the OS.
 
 \end{document}
