@@ -9,6 +9,7 @@
 \usepackage{titling}
 \usepackage{csquotes} % for \textquote{}
 \usepackage{listings}
+\usepackage{pgfgantt} % for gantt trees
 \usepackage{tikz}
 \usetikzlibrary{arrows, automata, positioning}
 
@@ -83,8 +84,8 @@ I don't know how to make cornered edges in a tikzpicture automata, but this shou
     \path (0) edge [] node {} (3);
     \path (3) edge [] node {\(\ne 0\)} (14);
     \path (14) edge [] node {} (pW);
-    \path (pW) edge [] node {\(\ne 0\)} (17);
-    \path (17) edge [] node {} (pF);
+    \path (pW) edge [] node {} (17);
+    \path (17) edge [] node {\(\ne 0\)} (pF);
     \path (pF) edge [] node {} (r0);
 
     \path (17) edge [] node {\(=0\)} (pB);
@@ -111,5 +112,26 @@ I don't know how to make cornered edges in a tikzpicture automata, but this shou
 \textbf{e)} False \\
 \textbf{f)} True
 \subsubsection*{3.}
-TODO. Möglich das Diagramm davor zu rotieren, zu verschieben und einen Pfad als rote Pfeile zu markieren.
+\begin{ganttchart}[
+    inline,
+    bar label font=\tiny,
+    x unit=0.7cm
+    ]{1}{18}
+    \gantttitle{greetings.c}{18} \\
+    \ganttbar{Welcome, Farewell}{1}{6}
+        \ganttbar[bar/.append style={dashed}]{ready}{7}{17}
+        \ganttbar{return}{18}{18} \\
+    \ganttbar{Howdy}{7}{10}
+        \ganttbar[bar/.append style={dashed}]{ready}{3}{6}
+        \ganttbar[bar/.append style={dashed}]{ready}{11}{14}
+        \ganttbar{exit}{15}{15} \\
+    \ganttbar{Hi, exit}{11}{12}
+    \ganttbar[bar/.append style={dashed}]{ready}{8}{10} \\
+    \ganttbar{Hello, exit}{13}{14}
+    \ganttbar[bar/.append style={dashed}]{ready}{9}{12} \\
+    \ganttbar{Bye, return}{16}{17}\ganttbar[bar/.append style={dashed}]{ready}{6}{15}
+\end{ganttchart} \\
+I used granttchart for this, which didn't enable me to use arrows that look good, but the diagram should still be self-explanatory. \\
+In this chart, the dashed lines signal that a process is ready to execute, which also is hinted by their text inside. \\
+The text inside the \textquote{normal} bars are either their output in \verb|stdout| or their exit with \verb|exit(0);| or \verb|return 0;|
 \end{document}
