@@ -221,7 +221,14 @@ static long getMaxLineLength(void) {
 }
 
 int main() {
-	//TODO: implement me
+	char line[256];
+	printf("Enter command to execute: ");
+	scanf("%s", line);
+	char* argv[] = file, arg1;
+
+	COMMAND* cmd = {0, NULL, NULL, NULL, argv}; //parseCommandLine(line);
+	execute(cmd); // example
+	free(cmd);
 }
 
 /**
@@ -230,7 +237,22 @@ int main() {
  * @arg cmd pointer to the command struct that shall be executed
  */
 static void execute(COMMAND *cmd) {
-	//TODO: implement me
+	if (cmd->parseError){
+		printf("%s\n", cmd->parseError);
+		return;
+	}
+
+	int pid_id_child = fork();
+	int status;
+
+	if (pid_id_child == 0){
+		execv(cmd->argv[0], cmd->argv); // quits automatically so there does not need to be a "quit(0);" after this.
+	}
+
+	if (!cmd->background){
+		waitpid(pid_id_child, &status, 0);	// Wait for child to be destroyed.
+	}
+	printf("Exitstatus [TODO] %d\n", status);
 }
 
 /* Helper for background task list command
