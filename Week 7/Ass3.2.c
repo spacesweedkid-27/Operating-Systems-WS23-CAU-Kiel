@@ -222,13 +222,27 @@ static long getMaxLineLength(void) {
 
 int main() {
 	char line[256];
-	printf("Enter command to execute: ");
-	scanf("%s", line);
-	char* argv[] = file, arg1;
+	char* cwd = malloc(128);
+	while(1) {
+		getcwd(cwd, 128);
 
-	COMMAND* cmd = {0, NULL, NULL, NULL, argv}; //parseCommandLine(line);
-	execute(cmd); // example
-	free(cmd);
+		fprintf(stdout, "%s", cwd); // HIER IST NE BAUSTELLE, ':' WIRD BEI MIR SCHNELLER GEPRINTED ALS DER REST
+		fprintf(stderr, ":");		// DIE WOLLEN ABER, DASS DAS IN DER MITTE IST, ALSO WIE ES HIER STEHT
+		fprintf(stdout, " ");		// SUCH MAL WAS DARÜBER ODER FIXE ES
+
+		scanf("%s", line);
+
+		if (getchar() == EOF){
+			printf("\n");
+			break;
+		}
+
+		printf("%s\n", line);
+		char* argv[] = {line, NULL};
+
+		COMMAND cmd = {0, NULL, NULL, argv[0], argv}; //parseCommandLine(line);
+		execute(&cmd); // example
+	}
 }
 
 /**
@@ -252,7 +266,7 @@ static void execute(COMMAND *cmd) {
 	if (!cmd->background){
 		waitpid(pid_id_child, &status, 0);	// Wait for child to be destroyed.
 	}
-	printf("Exitstatus [TODO] %d\n", status);
+	printf("Exitstatus [%s] = %d\n", cmd->cmdLine, status);
 }
 
 /* Helper for background task list command
