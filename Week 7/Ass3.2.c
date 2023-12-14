@@ -221,13 +221,6 @@ static long getMaxLineLength(void) {
 }
 
 int main() {
-	char* buffer = malloc(128);
-	scanf("%s", buffer);
-	COMMAND* example = parseCommandLine(buffer);
-	printf("COMMAND = %s\tARG = %s\nRAW = %s\nPARSEERROR = %s\nOUTFILE = %s\nBACKGROUND = %d\n", example->argv[0], example->argv[1], example->cmdLine, example->parseError, example->outFile, example->background);
-
-	return 0;
-
 	char line[256];
 	char* cwd = malloc(128);
 	while(1) {
