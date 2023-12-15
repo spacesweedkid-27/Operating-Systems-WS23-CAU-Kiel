@@ -3,22 +3,6 @@
 #include <pthread.h>  // POSIX threads and useful functions for them
 #include <sys/mman.h> // mmap for shared memory
 
-// to supress warnings
-int fork();
-pid_t wait();
-
-
-void* create_shared_memory(size_t size) {
-    // Our memory buffer will be readable and writable:
-    int protection = PROT_READ | PROT_WRITE;
-
-    // and be readable by other processes, but only in this group
-    int visibility = MAP_SHARED | MAP_ANONYMOUS;
-
-    // actually allocate the memory
-    return mmap(NULL, size, protection, visibility, -1, 0);
-}
-
 /* 
 The input for our threads as a struct since thread_create expects exactly one input
  Having a typedef makes it a bit more comfortable to use*/
@@ -72,45 +56,34 @@ long threaded_sum(int thread_num, long input_arr[], size_t array_len){
     // give the last segment more size if it was not divisible
     int remainder = array_len % thread_num;
 
-    // allocate shared memory to store the results
-    long* sums = create_shared_memory(sizeof(long) * thread_num);
+    // allocate array to store the thread addresses
+    pthread_t* threads = malloc(thread_num * sizeof(pthread_t));
+
+    // allocate array to store the thead inputs (and with that references to the results)
+    Thread_input* inputs = malloc(thread_num * sizeof(Thread_input));
 
     // start thread_num threads
     for (int i = 0; i < thread_num; ++i)
     {
-        pid_t pid = fork();
+        inputs[i] = (Thread_input){i * arr_width, (i+1) * arr_width, 0, input_arr};
 
-        if (pid == 0){
-            Thread_input thread_input = {i * arr_width, (i+1) * arr_width, 0, input_arr};
-
-            // If we're at the last thread-job, then make it's job a bit bigger.
-            if (i == thread_num - 1){
-                thread_input.upper_bound += remainder;   
-            }
-
-            thread_routine(&thread_input);
-            printf("Thread finished with result %ld\n", thread_input.res);
-            sums[i] = thread_input.res; // let's see if this works
-            exit(0);
+        // If we're at the last thread-job, then make it's job a bit bigger.
+        if (i == thread_num - 1){
+            inputs[i].upper_bound += remainder;   
         }
 
-        if (pid == -1){
-            perror("Something bad happened. Failed to create new thread.\n");
-            return -1;
-        } else {
-            printf("Started thread %d out of %d with pid %d\n", i + 1, thread_num, pid);
-        }
+        pthread_create(&threads[i], NULL, thread_routine, (void*)&inputs[i]);
     }
     
     // wait for all children to die
     for (int i = 0; i < thread_num; ++i)
-        wait(NULL);
+        pthread_join(threads[i], NULL);
 
     long temp = 0;
 
     // sum all sums to temp
     for (int i = 0; i < thread_num; ++i){
-        temp += sums[i];
+        temp += inputs[i].res;
     }
 
     return temp;
