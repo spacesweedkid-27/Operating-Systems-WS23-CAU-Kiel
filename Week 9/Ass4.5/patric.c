@@ -68,7 +68,12 @@ int main(int argc, char *argv[]) {
 
   struct triangle thread_args[THREAD_NUM];
 
-  for (int i = 0; i < THREAD_NUM; ++i)
-    assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
+  for (; ;){
+    char* line;
+  }
+
+  //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
+
+
   return 1;
 }
