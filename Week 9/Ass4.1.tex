@@ -1,0 +1,77 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{csquotes} % for \textquote{}
+\usepackage{listings}
+\usepackage{stix}
+
+\usepackage[
+    left = \glqq{},% 
+    right = \grqq{},% 
+    leftsub = \glq{},% 
+    rightsub = \grq{} %
+]{dirtytalk}
+
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-14em}
+\setlength{\jot}{12pt}
+
+\title{\scshape Operating Systems\\Assignment 4.1}
+\author{\scshape Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\lstdefinestyle{code}{
+    basicstyle=\ttfamily\footnotesize
+}
+\lstset{style = code}
+
+
+\begin{document}
+\maketitle
+
+\singlespacing
+\subsubsection*{Task 1}
+\begin{tabular}{c | c | c}
+    Algorithm & Pros & Cons \\ \hline
+    FCFS & Easy to implement & Convoy effect, really unfair \\
+    RR & Easy to implement & Still convoy effect, very much unfair for IO \\
+    SJF/SPN & No convoy effect & Unfair for slower processes, Starvation possible
+\end{tabular}
+\subsubsection*{Task 2}
+\textbf{a)} Multi-Level-Queues \\
+\textbf{b)} Use different strategies for different processes, if we can group them according to their source or if they are mostly IO-processes or not. Also use strategies to decide the priorities of different kinds of processes groups.\\
+\textbf{c)} A local scheduling strategies decides how to split up CPU-bursts of different processes inside a process group, a global scheduling strategy decides which processes group gets CPU-bursts.\\
+\textbf{d)} Static global scheduling strategies give each process group a priority, which starves lower priority process groups if higher priority process groups exists, whereas dynamic global scheduling strategies switch between processes according to the time they use, which may for example be dividing the CPU usage time percentage each group may use.
+\subsubsection*{Task 3}
+\textbf{a)} Edsger W. Dijkstra \\
+\textbf{b)} The so-called \textquote{Dijkstra Algorithm}, which finds the shortest paths in a node graph.
+\subsubsection*{Task 4}
+A binary semaphore is a counting semaphore which is initialized with the value 1 and does not exceed that value. \\
+A binary semaphore represents a data source which may only be used by one process at a time while a counting semaphore can allow more processes to use a data source, or, for example, a code snippet.
+\subsubsection*{Task 5}
+\textbf{a)} Active waiting is waiting for a conditional statement to be true, like for example a while loop. \\
+Passive waiting is a process or thread blocking itself so that no CPU-resource is being wasted while waiting for a condition to be true, like in the active waiting example. This can be realized with calling \verb|sleep()| or, like when waiting for a free resource, this can be realized by using semaphores. \\
+\textbf{b)} Active waiting may waste CPU-bursts and processing power, since the condition is checked every time in every given CPU-burst. Also, active waiting processes most of the time are being given unnecessary CPU-bursts, since the OS may or may not even know that the process really is actively waiting.
+\end{document}
