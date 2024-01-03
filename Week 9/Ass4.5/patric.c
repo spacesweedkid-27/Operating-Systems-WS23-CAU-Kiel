@@ -58,8 +58,37 @@ static void *printer(void *param) {
 
 }
 
+// Returns a pointer to a triangle from a string input
+// If the input is wrong return NULL
+// the string should be in the following format:
+// "(num,num,num),(num,num,num),(num,num,num)", whereas num is a number.
+struct triangle* parse(char* input){
+  struct triangle* temp = malloc(sizeof(struct triangle));
+  // this looks so stupid
+  if (sscanf(input, "(%d,%d),(%d,%d),(%d,%d)", &temp->point[0].x, &temp->point[0].y, &temp->point[1].x, &temp->point[1].y, &temp->point[2].x, &temp->point[2].y) != 6) {
+    errno = EINVAL;
+    return NULL;
+  }
+    
+  return temp;
+}
+
+void print_triangle(struct triangle input){
+  printf("(%d,%d),(%d,%d),(%d,%d)\n", input.point[0].x, input.point[0].y, input.point[1].x, input.point[1].y, input.point[2].x, input.point[2].y);
+}
+
 
 int main(int argc, char *argv[]) {
+
+  struct triangle* test = parse("(1,1),(2,4)GASBB,(7,5)");
+  if (test)
+    print_triangle(*test);
+  else {
+    perror("Parse failed");
+  }
+    
+
+  return;
   // TODO: Parse args and check for bad input
   int THREAD_NUM = 1;
 
@@ -72,8 +101,11 @@ int main(int argc, char *argv[]) {
   char* line_buf = malloc(18);
 
   for (; ;){
+    // Get 17 characters
     fgets(line_buf, 17, stdin);
-    printf("%s", line_buf);
+    
+    // Parse them
+    
   }
 
   //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
