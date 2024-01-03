@@ -42,7 +42,7 @@ static void calc_finished_cb(int boundary, int interior){
 * you need to bookkeep yourself if a thread has finished its workload.
 * @param param the param of our worker threads
 */
-static void *worker(void *param);
+static void *worker(void *param){}
 
 /**
 *\brief Start routine of the thread that is meant to present the results.
@@ -68,8 +68,12 @@ int main(int argc, char *argv[]) {
 
   struct triangle thread_args[THREAD_NUM];
 
+  // line length should be not more than 17 (alloc 18 bc of 0-terminator)
+  char* line_buf = malloc(18);
+
   for (; ;){
-    char* line;
+    fgets(line_buf, 17, stdin);
+    printf("%s", line_buf);
   }
 
   //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
