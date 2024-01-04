@@ -65,11 +65,14 @@ static void *printer(void *param) {
 struct triangle* parse(char* input){
   // allocate mem for a triangle
   struct triangle* temp = malloc(sizeof(struct triangle));
-  // this looks so stupid
-  if (sscanf(input, "(%d,%d),(%d,%d),(%d,%d)", &temp->point[0].x, &temp->point[0].y, &temp->point[1].x, &temp->point[1].y, &temp->point[2].x, &temp->point[2].y) != 6) {
-    // if the number of args parsed is not 6, then we set errno as invalid argument
-    errno = EINVAL;
-    // and return the nullpointer
+  // this looks so stupid, give a 24 char buffer so that if somebody has a valid input but spills their food on the keyboard just after that, the input is discarded.
+  // passing an input too long confusingly gives the error: free(): double free detected in tcache 2, and aborts.
+  char should_be_empty[24]; // non-heap object, does not have to be freed!
+  // this may or may not be the most cursed line I have written ever:
+  // scan the input for the formula below, and check if sscanf could parse 6 arguments, which are the 6 decimals, if it could parse 7, then the string after the last ')' exists, which
+  // makes the input unacceptable. There is no possiblilty for the case that we parsed 5 arguments correctly and pass a wrong string, because of the brackets seperating the last decimal and the string.
+  if (sscanf(input, "(%d,%d),(%d,%d),(%d,%d)%s\n", &temp->point[0].x, &temp->point[0].y, &temp->point[1].x, &temp->point[1].y, &temp->point[2].x, &temp->point[2].y, &should_be_empty) != 6) {
+    // return the nullpointer
     return NULL;
   }
   
@@ -92,12 +95,13 @@ int main(int argc, char *argv[]) {
 
   struct triangle thread_args[THREAD_NUM];
 
-  // line length should be not more than 17 (alloc 18 bc of 0-terminator)
-  char* line_buf = malloc(18);
+  //// line length should be not more than 17 (alloc 18 bc of 0-terminator)
+  size_t buf_size = 32;
+  char* line_buf = malloc(buf_size);
 
   for (; ;){
     // Get 17 characters
-    fgets(line_buf, 17, stdin);
+    getline(&line_buf, &buf_size, stdin);
     
     // Parse them
     struct triangle* next = parse(line_buf);
@@ -106,11 +110,9 @@ int main(int argc, char *argv[]) {
       printf("Parse completed, result is: ");
       print_triangle(*next);
     } else {
-      perror("Parse failed, will ignore input");
+      printf("Parse failed, will ignore input\n");
     }
 
-    // discard the rest, if there is any.
-    fflush(stdin);
     free(line_buf);
   }
 
