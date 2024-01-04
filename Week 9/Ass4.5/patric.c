@@ -8,7 +8,6 @@
 #include <semaphore.h>
 #include <limits.h>
 #include "triangle.h"
-#include <assert.h>
 
 // The shared state in our concurrent scenario
 struct state {
@@ -17,7 +16,9 @@ struct state {
   int active, finished;
 } state;
 
-volatile char should_output = 0;
+short should_output = 0;
+
+sem_t semaphore;
 
 /**
  * @brief Callback function for the countPoints() function of triangle.h.
@@ -27,12 +28,16 @@ volatile char should_output = 0;
  * @param interior Found points in the interior of the triangle
  */
 static void calc_finished_cb(int boundary, int interior){
-  // TODO: Add semaphore
-  // This is what has to be done
+  // ENTERING CRITICAL AREA
+  sem_wait(&semaphore);
   state.boundary += boundary;
   state.interior += interior;
   state.active--;
   state.finished++;
+
+  should_output = 1;
+  sem_post(&semaphore);
+  // EXITING CRITICAL AREA
 }
 
 /**
@@ -42,20 +47,29 @@ static void calc_finished_cb(int boundary, int interior){
 * you need to bookkeep yourself if a thread has finished its workload.
 * @param param the param of our worker threads
 */
-static void *worker(void *param){}
+static void *worker(void *param){
+  // cast input back to right format
+  struct triangle* input = (struct triangle*) param;
+  countPoints(input, &calc_finished_cb);
+  return NULL;
+}
 
 /**
 *\brief Start routine of the thread that is meant to present the results.
 *@param param the param of our thread
 **/
 static void *printer(void *param) {
-  for (; ;)
+  for (; ;){
     while (!should_output)
       ; // wait for output req
-    // TODO: Add semaphore
+    // ENTERING CRITICAL AREA
+    sem_wait(&semaphore);
     should_output = 0;
-    printf("Found %d boundary and %d interior points, %d active threads, %d finished threads\r", state.boundary, state.interior, state.active, state.finished);
-
+    sem_post(&semaphore);
+    // EXITING CRITICAL AREA
+    printf("Found %d boundary and %d interior points, %d active threads, %d finished threads\n", state.boundary, state.interior, state.active, state.finished);
+  }
+  return NULL;
 }
 
 // Returns a pointer to a triangle from a string input
@@ -86,39 +100,71 @@ void print_triangle(struct triangle input){
 
 
 int main(int argc, char *argv[]) {
-  
-  // TODO: Parse args and check for bad input
-  int THREAD_NUM = 1;
+  // dec THREAD_NUM
+  int THREAD_NUM;
+  // buffer to detect wrong args
+  char should_be_empty[24];
 
-  pthread_t threads[THREAD_NUM];
+  if (argc != 2){
+    printf("Wrong amount of arguments.\n");
+    return 1;
+  }
+  // check if the string exists, then display error and exit otherwise init THREAD_NUM
+  if (sscanf(argv[1], "%d%s", &THREAD_NUM, &should_be_empty) != 1){
+    printf("Garbage arguments detected.\n");
+    return 2;
+  }
+
+  // Init semaphore for threads with maximum access being 1.
+  sem_init(&semaphore, 0, 1);
+
+  // Init output thread
   pthread_t output_thread;
 
-  struct triangle thread_args[THREAD_NUM];
+  printf("Starting output thread...\n");
+  pthread_create(&output_thread, NULL, &printer, NULL);
 
-  //// line length should be not more than 17 (alloc 18 bc of 0-terminator)
   size_t buf_size = 32;
   char* line_buf = malloc(buf_size);
 
   for (; ;){
-    // Get 17 characters
+    // Fill the line buffer.
     getline(&line_buf, &buf_size, stdin);
     
-    // Parse them
+    // Parse it.
     struct triangle* next = parse(line_buf);
-    // (same as next != NULL)
+    // Check for wrong input.
     if (next){
       printf("Parse completed, result is: ");
       print_triangle(*next);
     } else {
+      // Display warning and continue (aka, skip this turn)
       printf("Parse failed, will ignore input\n");
+      continue;
     }
 
-  }
+    printf("Adding new triangle...\n");
+
+    while (state.active >= THREAD_NUM || state.active < 0){
+      // Wait
+    }
+
+    // ENTERING CRITICAL AREA
+    sem_wait(&semaphore);
+    state.active++;
+    sem_post(&semaphore);
+    // EXITING CRITICAL AREA
+    
+    // dec new thread
+    pthread_t thread;
+    // start it // TODO: CHECK FOR ERRORS
+    pthread_create(&thread, NULL, &worker, next);
+    // and detach it. // TODO: CHECK FOR ERRORS
+    pthread_detach(thread);
+    }
 
   // lol, I accidentally put the free in the while loop and wondered why I got a double free about before I could see "Parse completed", IO is slow...
   free(line_buf);
-
-  //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
 
 
   return 1;
