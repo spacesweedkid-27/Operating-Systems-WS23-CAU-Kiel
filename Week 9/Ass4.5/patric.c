@@ -63,32 +63,27 @@ static void *printer(void *param) {
 // the string should be in the following format:
 // "(num,num,num),(num,num,num),(num,num,num)", whereas num is a number.
 struct triangle* parse(char* input){
+  // allocate mem for a triangle
   struct triangle* temp = malloc(sizeof(struct triangle));
   // this looks so stupid
   if (sscanf(input, "(%d,%d),(%d,%d),(%d,%d)", &temp->point[0].x, &temp->point[0].y, &temp->point[1].x, &temp->point[1].y, &temp->point[2].x, &temp->point[2].y) != 6) {
+    // if the number of args parsed is not 6, then we set errno as invalid argument
     errno = EINVAL;
+    // and return the nullpointer
     return NULL;
   }
-    
+  
   return temp;
 }
 
+// simple printer, prints the triangle as it should be parsed.
 void print_triangle(struct triangle input){
   printf("(%d,%d),(%d,%d),(%d,%d)\n", input.point[0].x, input.point[0].y, input.point[1].x, input.point[1].y, input.point[2].x, input.point[2].y);
 }
 
 
 int main(int argc, char *argv[]) {
-
-  struct triangle* test = parse("(1,1),(2,4)GASBB,(7,5)");
-  if (test)
-    print_triangle(*test);
-  else {
-    perror("Parse failed");
-  }
-    
-
-  return;
+  
   // TODO: Parse args and check for bad input
   int THREAD_NUM = 1;
 
@@ -105,7 +100,18 @@ int main(int argc, char *argv[]) {
     fgets(line_buf, 17, stdin);
     
     // Parse them
-    
+    struct triangle* next = parse(line_buf);
+    // (same as next != NULL)
+    if (next){
+      printf("Parse completed, result is: ");
+      print_triangle(*next);
+    } else {
+      perror("Parse failed, will ignore input");
+    }
+
+    // discard the rest, if there is any.
+    fflush(stdin);
+    free(line_buf);
   }
 
   //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
