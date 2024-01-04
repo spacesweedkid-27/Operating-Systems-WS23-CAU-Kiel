@@ -18,6 +18,7 @@ struct state {
 
 sem_t semaphore;
 sem_t output_semaphore;
+sem_t avalible_threads;
 
 // simple printer, prints the triangle as it should be parsed.
 void print_triangle(struct triangle input){
@@ -64,11 +65,13 @@ static void *worker(void *param){
   state.active--;
   state.finished++;
   // Because we have another change, notify.
-  // sem_post(&output_semaphore);
+  sem_post(&output_semaphore);
+
   sem_post(&semaphore);
   // EXITING CRITICAL AREA
 
-  // lol, because the thread is detached, we don't have to free
+  // increase threads that may be started
+  sem_post(&avalible_threads);
 
   return NULL;
 }
@@ -96,7 +99,7 @@ struct triangle* parse(char* input){
   struct triangle* temp = malloc(sizeof(struct triangle));
   // this looks so stupid, give a 24 char buffer so that if somebody has a valid input but spills their food on the keyboard just after that, the input is discarded.
   // passing an input too long confusingly gives the error: free(): double free detected in tcache 2, and aborts.
-  char* should_be_empty = malloc(24);
+  char* should_be_empty = malloc(1024);
   // this may or may not be the most cursed line I have written ever:
   // scan the input for the formula below, and check if sscanf could parse 6 arguments, which are the 6 decimals, if it could parse 7, then the string after the last ')' exists, which
   // makes the input unacceptable. There is no possiblilty for the case that we parsed 5 arguments correctly and pass a wrong string, because of the brackets seperating the last decimal and the string.
@@ -138,16 +141,25 @@ int main(int argc, char *argv[]) {
   // Init semaphore for passive waiting in output_thread
   sem_init(&output_semaphore, 0, 0);
 
+  // Init semaphore for passive waiting in main thread
+  // Decreases when the main thread starts another
+  // Increases when a thread exits
+  sem_init(&avalible_threads, 0, THREAD_NUM);
+
   // Init output thread
   pthread_t output_thread;
 
   printf("Starting output thread...\n");
   pthread_create(&output_thread, NULL, &printer, NULL);
 
-  size_t buf_size = 32;
+  size_t buf_size = 1024;
   char* line_buf = malloc(buf_size);
 
   for (; ;){
+    // detect EOF
+    if (feof(stdin))
+      return 0;
+
     // Fill the line buffer.
     getline(&line_buf, &buf_size, stdin);
     
@@ -160,15 +172,14 @@ int main(int argc, char *argv[]) {
       print_triangle(*next);
     } else {
       // Display warning and continue (aka, skip this turn)
-      printf("Parse failed, will ignore input\n");
+      fprintf(stderr, "Parse failed, will ignore input\n");
       continue;
     }
 
     printf("Adding new triangle...\n");
 
-    while (state.active >= THREAD_NUM || state.active < 0){
-      // Wait
-    }
+    // decrease threads that may be started
+    sem_wait(&avalible_threads);
 
 
     // ENTERING CRITICAL AREA
