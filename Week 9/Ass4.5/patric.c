@@ -75,7 +75,7 @@ struct triangle* parse(char* input){
     // return the nullpointer
     return NULL;
   }
-  
+
   return temp;
 }
 
@@ -113,8 +113,10 @@ int main(int argc, char *argv[]) {
       printf("Parse failed, will ignore input\n");
     }
 
-    free(line_buf);
   }
+
+  // lol, I accidentally put the free in the while loop and wondered why I got a double free about before I could see "Parse completed", IO is slow...
+  free(line_buf);
 
   //assert(!pthread_create(&threads[i], NULL, printer, &thread_args[i]))
 
