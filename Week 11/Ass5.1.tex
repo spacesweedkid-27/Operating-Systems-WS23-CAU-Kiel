@@ -1,0 +1,117 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[ngerman]{babel} 
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts} 
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{csquotes} % for \textquote{}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{stix}
+\usepackage{stmaryrd} % \llbracket and \rrbracket
+\usetikzlibrary{arrows, automata, positioning}
+
+\newcommand*{\qed}{\null\nobreak\hfill\ensuremath{\square}}
+\newcommand*{\lqed}{\null\nobreak\hfill\ensuremath{\blacksquare}}
+\newcommand*{\puffer}{\text{ }\text{ }\text{ }\text{ }}
+\newcommand*{\gedanke}{\textbf{-- }}
+\newcommand*{\gap}{\text{ }}
+\newcommand*{\setDef}{\gap|\gap}
+\newcommand*{\vor}{\textbf{Vor.:} \gap}
+\newcommand*{\beh}{\textbf{Beh.:} \gap}
+\newcommand*{\bew}{\textbf{Bew.:} \gap}
+% Hab länger gebraucht um zu realisieren, dass das ne gute Idee wäre
+\newcommand*{\R}{\mathbb R}
+% Das hier wird sehr nett werden
+\newcommand*{\vDashR}{\mathrel{\reflectbox{\(\vDash\)}}}
+\newcommand*{\LeftrightvDash}{\vDash\vDashR}
+\newcommand{\lb}{\llbracket}
+\newcommand{\rb}{\rrbracket}
+\newcommand{\rbb}{\rrbracket_{\beta}}
+
+\newenvironment{noalign*}
+ {\setlength{\abovedisplayskip}{0pt}\setlength{\belowdisplayskip}{0pt}%
+  \csname flalign*\endcsname}
+ {\csname endflalign*\endcsname\ignorespacesafterend}
+
+
+
+\pagestyle{plain}
+\allowdisplaybreaks
+
+\setlength{\droptitle}{-11em}
+\setlength{\jot}{12pt}
+%\setlength{\hoffset}{-1in}     Wenn nötig
+%\setlength{\textwidth}{535pt}  Wenn nötig
+
+\title{Operating Systems\\Assignment 5.1 - Content Questions}
+\author{Henri Heyden, Nike Pulow \\ \small stu240825, stu239549}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+\singlespacing
+\vspace*{-2cm}
+\subsection*{5.1.1}
+\subsubsection*{Why can we not simply use time or clocks as means for synchronization?}
+Synchronization via time would usually result in slower processes, as for every process there must 
+be a specific amount of time specified, in which this process needs to complete their task. This would 
+also mean that if the process finishes its task way before, it still would have to wait for the timeout 
+to occur. On the other hand, if a process needs more time than specified in its timeout interval, this 
+might result in processes never being able to finish. \\
+The same line of arguments goes for clocks - clocks are a great way to synchronize with real world time; 
+yet, as mentioned above, time is not a great way for synchronization. Logical clocks on the other hand provide 
+some control over the order of events in a distributed system or pose as useful checkpoints in alogrithms. \\
+In summery: semaphores provide more controlled access to critical sections and shared resources, which of 
+course is the whole point of synchronization in this context. While time might be able to do the same thing, 
+it is just way more efficient to use semaphores, as there is less waste of resources because of waiting times.
+
+\subsection*{5.1.2}
+\subsubsection*{What are deadlocks?}
+''Deadlock is the situation in which one or more processes within a system are blocked forever due to 
+requirements which can never be satisfied.'' \\(Holt, 1971, p. 1)\\ In other words: In a deadlock situation 
+a process A is waiting for a process B to release a resource, while process B is waiting on process A to 
+release a resource.\\
+\subsubsection*{What are livelocks?}
+A livelock occurs when ''one or more threads continuously change their states in response to changes in 
+states of the other threads without doing any useful work.'' (Ganai, 2013, p. 1)\\
+\subsubsection*{What is the difference and are they both equally difficult to resolve?}
+The main difference lies in what causes a live-/deadlock to occur: for deadlocks it is dependencies, for 
+livelocks it is a status change in response to another status change. \\
+Livelocks are harder to recognise than deadlocks, since the program counter of the involved processes 
+is constantly changing, due to the status changes of the processes. There are several different strategies 
+to solve both problems, all of which are dependent on circumstance. Usually, the deadlock problem is supposed 
+to be handled by the application, whereas prevention is practised in real-time operation, while detection is 
+the way to go in debugging situations.\\
+Livelocks are usually being resolved by changing the decision-making logic (refer to the philosopher's problem) 
+or by introducing randomness and delays. \\
+If detected and analyzed properly, both problems are equally difficult to solve, just in different ways. 
+
+\subsection*{5.1.3}
+\subsubsection*{Can you use a single semaphore as a lock? More precisely, can every use-case of a lock be 
+implemented by using a single semaphore? Why?}
+While it is genereally possible to implement a lock by using a single (binary) semaphore, it may not be 
+the best idea, as mutexes for example serve other purposes as well as provide additional functionality.
+
+\subsubsection*{Can you directly use a single lock as a semaphore? More precisely, can every use-case of 
+a semaphore be implemented by using a single lock? Why?}
+Generally, this is not possible. There may be use-cases of binary semiphores that are implemented by using a 
+lock, but as soon as there is more than one resource managed by a (counting) semaphore, it will not be 
+possible to efficiently implement it using a single lock. The main problem in this scenario is, that a single 
+exclusive lock will only be able to manage one resource, so either all the other resources remain unmanaged, 
+leading to a whole other world of problems, or all other resources remain unused, which is horrible from 
+a performance point of view.
+
+\subsubsection*{Does this mean they are equivalent or is one of them the more powerful abstraction?}
+
+\subsection*{5.1.4}
+\subsubsection*{What is RPC?}
+\subsubsection*{What is the idea of RPC?}
+\subsubsection*{What is a stub in the context of RPC?}
+\subsubsection*{What is a skeleton in the context of RPC?}
+\end{document}
