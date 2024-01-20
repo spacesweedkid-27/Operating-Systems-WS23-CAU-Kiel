@@ -108,6 +108,10 @@ leading to a whole other world of problems, or all other resources remain unused
 a performance point of view.
 
 \subsubsection*{Does this mean they are equivalent or is one of them the more powerful abstraction?}
+There are different use-cases, but generally, speaking, what can be done with locks might also be done with 
+semaphores, and more (refer to ring buffers). As semaphores were introduced by Dijkstra in 1968 to solve problems 
+that could not have been solved using locks (e. g. ''busy wait''), it is save to say, that semaphores indeed 
+are the more powerful abstraction.
 
 \subsection*{5.1.4}
 \subsubsection*{What is RPC?}
