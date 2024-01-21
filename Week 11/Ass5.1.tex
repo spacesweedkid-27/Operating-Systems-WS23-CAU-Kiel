@@ -110,12 +110,31 @@ a performance point of view.
 \subsubsection*{Does this mean they are equivalent or is one of them the more powerful abstraction?}
 There are different use-cases, but generally, speaking, what can be done with locks might also be done with 
 semaphores, and more (refer to ring buffers). As semaphores were introduced by Dijkstra in 1968 to solve problems 
-that could not have been solved using locks (e. g. ''busy wait''), it is save to say, that semaphores indeed 
+that could not have been solved using locks (e. g. ''busy wait''), it is safe to say, that semaphores indeed 
 are the more powerful abstraction.
 
 \subsection*{5.1.4}
 \subsubsection*{What is RPC?}
+RPC stands for Remote Procedure Call and is a concept implemented in networks by communication systems. 
+What it does is calling a function for a return value that is needed by a local machine (client) and executing 
+this function on a server.
 \subsubsection*{What is the idea of RPC?}
+Procedure calls are calls that transcend address space, meaning a procedure call that is not executed on the machine it 
+was called, but rather on another machine within the network. A communication system is tasked with managing these 
+RPC between client and server, just as it does for IPC. The client calls a function and creates a client stub locally 
+that sends the call over to the communication system as a message. The communication system then figures out the proper 
+host (in case there are more than one possibilities) and passes the message on to the skeleton on the server. The 
+skeleton unpacks the call, the server processes it and returns the return value back to the skeleton, that then packs 
+it within a message. The communication system sends the message over to the original client host, the stub unpacks the 
+message and the return value of the RPC is returned to the client. This takes some procedural load off of the client 
+machine, but heightens the load on the server.
 \subsubsection*{What is a stub in the context of RPC?}
+Stub in the context of RPC means a representation of the server on the client side and basically is an abstraction 
+of the IPC mechanism. A subprogram on a local machine is substituted by a stub having as identical identifier 
+as the server-sided function has. The stub packs the procedure call into a message and passes that message over to 
+the communication system, so that the call itself is implemented by a message exchange.
 \subsubsection*{What is a skeleton in the context of RPC?}
+On the server-side the client is represented by a so-called skeleton. The skeleton calls the implemented function 
+on the server-side, unpacks the parameters of the call and packs the return value, which is later unpacked by the 
+client-side stub, after the call's return was sent via message exchange.
 \end{document}
